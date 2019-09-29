@@ -1,0 +1,48 @@
+<!--sidebar start-->
+<aside>
+    <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu">
+            <li class="active">
+                <a class="" href="#">
+                    <i class="icon_house_alt"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="">
+                <a [routerLink]="['/principal', {outlets: {child1: ['responsable']}}]">
+                    <i class="social_myspace"></i>
+                    <span>Responsable</span>
+                </a>
+            </li>
+            <li class="" [ngClass]="{'active':stkSub}" (click)="stkSub=!stkSub">
+                <a [routerLink]="['/principal', {outlets: {child1: ['candidats']}}] " class="" style="cursor: pointer;">
+                    <i class="social_myspace"></i>
+                    <span>Candidats</span>
+                </a>
+            </li>
+            <li class="">
+                <a [routerLink]="['/principal', {outlets: {child1: ['formation']}}]" class="">
+                    <i class="icon_documents_alt"></i>
+                    <span>Formation
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a class="" [routerLink]="['/principal', {outlets: {child1: ['session']}}]">
+                    <i class="icon_calendar"></i>
+                    <span>Session</span>
+                </a>
+            </li>
+            <li class="" [ngClass]="{'active':congSub}" (click)="congSub=!congSub">
+                <a class="" style="cursor: pointer;" [routerLink]="['/principal', {outlets: {child1: ['actualite']}}]">
+                    <i class="icon_calendar"></i>
+                    <span>Actualite</span>
+                </a>
+            </li>
+
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>
+<!--sidebar end-->
