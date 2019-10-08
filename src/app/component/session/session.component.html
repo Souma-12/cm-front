@@ -1,1 +1,325 @@
-<p>session works!</p>
+<style>
+a:hover {
+    text-decoration: none;
+  color: #008CBA;
+  cursor: pointer;
+}
+</style>
+<div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h3>Liste des Sessions</h3>
+                    <div style="float: right; margin-bottom: 10px;">
+                        <button class="btn btn-primary" style="margin-right: 5px;" (click)="openModal(template)">Nouveau
+                            session</button>
+                        <button class="btn btn-info" (click)="showFilter()">Filtrer<i class="fa fa-filter"
+                                aria-hidden="true"></i></button>
+                    </div>
+                </header>
+                <div style="margin-top: 30px; margin-right: 2">
+    
+                    <div type="success" dismissible="true" *ngIf="deleted">
+                        <strong>Succées !</strong> La suppression est effectué avec succés.
+                    </div>
+                </div>
+                <table class="table table-striped table-advance table-hover" *ngIf="!(noData && dataLoaded)">
+                    <thead>
+                        <tr>
+                                <th>
+                                      id
+                                     </th>
+                            <th>
+                               description
+                            </th>
+                            <th>
+                                Date Debut
+                            </th>
+                            <th>
+                                Date Fin
+                            </th>
+    
+                            <th>
+                                    Formation
+                                </th>
+                            <th style="min-width: 5%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngFor="let session of Session">
+                        <tr>
+                            <td>{{session.id}}</td>
+                            <td>{{session.description}}</td>
+                            <td>{{session.dateDebut | date: 'dd-MM-yyyy'}}</td>
+                            <td>{{session.datefin | date: 'dd-MM-yyyy'}}</td>
+                            <td><a  (click)="getFormationDetails(detailsFormation,session.formation.id)">{{session.formation.description }}</a></td>
+
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-info" tooltip="Details"
+                                        (click)="openDetailsModal(details, session)"><i class="icon_info_alt"></i></button>
+                                    <button tooltip="Modifier" (click)="openUpdateModal(updatetemplate, session)"
+                                        class="btn btn-success"><i class="icon_pencil-edit_alt"></i></button>
+                                    <button class="btn btn-danger" tooltip="Supprimer"
+                                        (click)="openDeleteModal(confirmDelete, session, i)"><i
+                                            class="icon_close_alt2"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+    
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    
+    <ng-template #template>
+        <form class="form-horizontal " method="get">
+            <div class="modal-header">
+                <h3 class="modal-title pull-left">Ajout d'une session</h3>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-sm-4 pull-left">
+                            <label class="control-label">description</label></div>
+                        <div class="col-sm-8">
+                            <input type="int" class="form-control" [(ngModel)]="newSession.description"
+                                [ngModelOptions]="{standalone: true}" id="description" nom="description" required #description="ngModel">
+                            <div *ngIf="description.errors && (description.dirty || description.touched)" class="alert alert-danger">
+                                <div [hidden]="!description.errors.required">
+                                        description obligatoire!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+           
+                <div class="form-group">
+                    <div class="col-sm-4 pull-left">
+                        <label class="control-label">dateDebut*</label></div>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" [(ngModel)]="newSession.dateDebut"
+                            [ngModelOptions]="{standalone: true}" id="dateDebut" nom="dateDebut" required
+                            #dateDebut="ngModel">
+                        <div *ngIf="dateDebut.errors && (dateDebut.dirty || dateDebut.touched)" class="alert alert-danger">
+                            <div [hidden]="!dateDebut.errors.required">
+                                date Debut obligatoire!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 pull-left">
+                        <label class="control-label">Date fin</label></div>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" [(ngModel)]="newSession.datefin"
+                            [ngModelOptions]="{standalone: true}" name="datefin" id="datefin" required #datefin="ngModel">
+                        <div *ngIf="datefin.errors && (datefin.dirty || datefin.touched)" class="alert alert-danger">
+                            <div [hidden]="!datefin.errors.required">
+                                date fin obligatoire!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 pull-left">
+                        <label class="control-label">Formation</label></div>
+                    <div class="col-sm-8">
+                        <select  class="form-control"  [ngModelOptions]="{standalone: true}"  [(ngModel)]="newSession.formation">
+                                <option  >
+                                        Choisir une formation
+                                </option>
+                            <option *ngFor="let form of listFormations" [ngValue]="form">
+                                    {{form.description}}
+                            </option>
+                        </select>
+
+                    </div>
+                </div>
+    
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success pull-left" (click)="addSession()">Ajouter</button>
+                <button type="button" class="btn btn-danger" (click)="modalRef.hide()">Annuler</button>
+    
+            </div></div>
+        </form>
+    </ng-template>
+    
+    <ng-template #updatetemplate>
+        <form class="form-horizontal">
+            <div class="modal-header">
+                <h3 class="modal-title pull-left">Modification de session </h3>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        
+                    <div class="form-group">
+                        <div class="col-sm-4 pull-left">
+                            <label class="control-label">id</label></div>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" [(ngModel)]="sessionToUpdate.id"
+                                [ngModelOptions]="{standalone: true}" id="id" nom="id" required #nom="ngModel">
+                            <div *ngIf="id.errors && (id.dirty || id.touched)" class="alert alert-danger">
+                                <div [hidden]="!id.errors.required">
+                                        id obligatoire!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                <div class="form-group">
+                    <div class="col-sm-4 pull-left">
+                        <label class="control-label">descripttion</label></div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" [(ngModel)]="sessionToUpdate.descripttion"
+                            [ngModelOptions]="{standalone: true}" id="descripttion" nom="descripttion" required #nom="ngModel">
+                        <div *ngIf="descripttion.errors && (descripttion.dirty || descripttion.touched)" class="alert alert-danger">
+                            <div [hidden]="!descripttion.errors.required">
+                                    descripttion obligatoire!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4 pull-left">
+                        <label class="control-label">dateDebut*</label></div>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" [ngModel]="sessionToUpdate.dateDebut | date:'yyyy-MM-dd'"
+                            [ngModelOptions]="{standalone: true}" id="dateDebut" nom="dateDebut" required
+                            #dateDebut="ngModel">
+                        <div *ngIf="dateDebut.errors && (dateDebut.dirty || dateDebut.touched)" class="alert alert-danger">
+                            <div [hidden]="!dateDebut.errors.required">
+                                date Debut obligatoire!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 pull-left">
+                        <label class="control-label">Date fin*</label></div>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" [ngModel]="sessionToUpdate.datefin | date:'yyyy-MM-dd'"
+                            [ngModelOptions]="{standalone: true}" name="datefin" id="datefin" required #datefin="ngModel">
+                        <div *ngIf="datefin.errors && (datefin.dirty || datefin.touched)" class="alert alert-danger">
+                            <div [hidden]="!datefin.errors.required">
+                                date fin obligatoire!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+        
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success pull-left" (click)="updateSession();">Modifier</button>
+                <button type="button" class="btn btn-danger" (click)="modalRef.hide()">Annuler</button>
+    
+            </div>
+        </form>
+    </ng-template>
+    
+    <ng-template #confirmDelete>
+        <div class="modal-body text-center">
+            <p>Êtes-vous sûr de vouloir supprimer cette session?</p>
+            <button type="button" style="margin-right: 7px;" class="btn btn-default" (click)="confirm()">Oui</button>
+            <button type="button" class="btn btn-primary" (click)="modalRef.hide()">Non</button>
+        </div>
+    </ng-template>
+    
+    <ng-template #details>
+        <div class="modal-header">
+            <h3 class="modal-title pull-left">Detail:{{selectedSession.description}}</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <table>
+                            <tr>
+    
+                                <td>
+                                    <img src="../../../assets/img/Cost.jpg" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <table>
+                            <tr>
+    
+                                <td>
+                                    <strong>id</strong> {{selectedSession.id}}<br><br><br>
+                                    <strong>descripttion</strong> {{selectedSession.descripttion}}<br><br><br>
+                                    <strong>Date Debut</strong> {{selectedSession.dateDebut | date:'yyyy-MM-dd'}}<br><br><br>
+                                    <strong>Date Fin</strong> {{selectedSession.datefin | date:'yyyy-MM-dd'}}<br><br><br>
+    
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+    
+        </div>
+        <div style=" left: 80%;position: relative;">
+    
+            <button class="btn btn-default" tooltip="Annuler" style="margin-left: 1%;" (click)="modalRef.hide()"><i
+                    class="icon_close_alt2"></i> Annuler</button>
+        </div>
+    
+    
+        </div>
+    </ng-template>
+
+    <ng-template #detailsFormation>
+            <div class="modal-header">
+                <h3 class="modal-title pull-left">Detail: {{selectedFormation.description}}</h3>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <table>
+                                <tr>
+        
+                                    <td>
+                                        <img style="width: 30px;height: 30px" src="../../../assets/img/yomna.jpg" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table>
+                                <tr>
+        
+                                    <td>
+        
+                                        <strong>Description</strong> {{selectedFormation.description}}<br><br><br>
+                                        <strong>Date Debut</strong> {{selectedFormation.dateDebut | date:'yyyy-MM-dd'}}<br><br><br>
+                                        <strong>Date Fin</strong> {{selectedFormation.dateFin | date:'yyyy-MM-dd'}}<br><br><br>
+        
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+        
+            </div>
+            <div style=" left: 80%;position: relative;">
+        
+                <button class="btn btn-default" tooltip="Annuler" style="margin-left: 1%;" (click)="modalRef.hide()"><i
+                        class="icon_close_alt2"></i> Annuler</button>
+            </div>
+        
+        
+            </div>
+        </ng-template>

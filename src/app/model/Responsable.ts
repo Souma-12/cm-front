@@ -1,9 +1,9 @@
 import { User } from './User';
 
 export class Responsable extends User {
-     nbheure;
-	 salaire;
-	 soldeconge;
-     congeAtteint;
-	 specialite;
+     nbheure: any;
+	 salaire: any;
+	 soldeconge: any;
+     congeAtteint: any;
+	 specialite: any;
 	}

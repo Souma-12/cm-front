@@ -23,7 +23,9 @@ export class SessionServiceService {
 
    createSession(session){
     this.headers.append('Accept', 'application/json;charset=UTF-8');
-    const options = { headers: this.headers };
+    const options = { headers: this.headers };   
+     console.log('this. session ',session )
+
     return this.http.post(this.uri, session,options);
   }
   deleteSession(id){

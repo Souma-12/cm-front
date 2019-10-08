@@ -1,11 +1,11 @@
 export class User {
 
     id: any;
-	nom;
-	prenom;
-    dateNaiss;
-    adress;
-	email;
+	nom: any;
+	prenom: any;
+    dateNaiss: any;
+    adress: any;
+	email: any;
 	login;
 	pass;
     dateCreation;

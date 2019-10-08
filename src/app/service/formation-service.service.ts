@@ -24,6 +24,7 @@ export class FormationServiceService {
    createFormation(formation){
     this.headers.append('Accept', 'application/json;charset=UTF-8');
     const options = { headers: this.headers };
+    console.log('+ formation ++++',formation);
     return this.http.post(this.uri,formation, options);
   }
   deleteFormation(id){
